@@ -1,5 +1,5 @@
 // Configuration
-const API_URL = 'https://raw.githubusercontent.com/sangajay2/ai/main/data/readings.json';  // GitHub raw content URL
+const API_URL = 'https://raw.githubusercontent.com/sangajay2/ai/main/docs/data/readings.json';  // GitHub raw content URL
 const UPDATE_INTERVAL = 2000;  // Update every 2 seconds
 
 // Initialize charts
