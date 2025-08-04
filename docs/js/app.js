@@ -1,7 +1,6 @@
 // Configuration
 const API_URL = 'https://raw.githubusercontent.com/sangajay2/ai/docs-only/docs/data/readings.json';  // GitHub raw content URL
 const UPDATE_INTERVAL = 2000;  // Update every 2 seconds
-const DEBUG = true;  // Enable console logging
 
 // Initialize charts
 const hrChart = new Chart(document.getElementById('hrChart'), {
@@ -50,20 +49,12 @@ const spo2Chart = new Chart(document.getElementById('spo2Chart'), {
 
 // Update dashboard with new data
 function updateDashboard(data) {
-    try {
-        // Get the latest reading
-        const latestReading = data[data.length - 1];
-        if (DEBUG) console.log('📊 Latest reading:', latestReading);
-        
-        // Update current readings
-        document.getElementById('currentHR').textContent = 
-            `${Math.round(latestReading.heart_rate)} BPM`;
-        document.getElementById('currentSpO2').textContent = 
-            `${Math.round(latestReading.spo2)}%`;
-            
-        // Add source indicator if available
-        const sourceText = latestReading.source ? ` (${latestReading.source})` : '';
-        document.getElementById('currentHR').title = `Last updated: ${new Date(latestReading.timestamp * 1000).toLocaleString()}${sourceText}`;
+    // Update current readings
+    const latestReading = data[data.length - 1];
+    document.getElementById('currentHR').textContent = 
+        `${Math.round(latestReading.heart_rate)} BPM`;
+    document.getElementById('currentSpO2').textContent = 
+        `${Math.round(latestReading.spo2)}%`;
 
     // Update charts
     const timestamps = data.map(reading => {
@@ -87,29 +78,11 @@ function updateDashboard(data) {
 // Fetch data from API
 async function fetchData() {
     try {
-        if (DEBUG) console.log('🔍 Fetching data from:', API_URL);
-        
-        const response = await fetch(API_URL, {
-            cache: 'no-store'  // Disable caching to get fresh data
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        if (DEBUG) console.log('📡 Response status:', response.status);
-        
+        const response = await fetch(API_URL);
         const data = await response.json();
-        if (DEBUG) console.log('📊 Received data:', data.length, 'readings');
-        
-        if (data && Array.isArray(data) && data.length > 0) {
-            updateDashboard(data);
-            if (DEBUG) console.log('✅ Dashboard updated with latest data');
-        } else {
-            console.warn('⚠️ No readings found in the data');
-        }
+        updateDashboard(data);
     } catch (error) {
-        console.error('❌ Error fetching data:', error);
+        console.error('Error fetching data:', error);
     }
 }
 
